@@ -117,7 +117,7 @@ window.addEventListener ('scroll',()=>{
             
         }else{clearInterval()};
         
-        },25);
+        },45);
         
         setInterval(()=>{
             
@@ -125,7 +125,7 @@ window.addEventListener ('scroll',()=>{
                 counter++;
                 prog2.innerHTML = `${counter}%`
             }else{clearInterval()};
-            },25);
+            },45);
         
         
             setInterval(()=>{
@@ -135,7 +135,7 @@ window.addEventListener ('scroll',()=>{
                     prog3.innerHTML = `${counter+1}%`
                     
                 }else{clearInterval()};
-                },25);
+                },45);
     }
   
 })
