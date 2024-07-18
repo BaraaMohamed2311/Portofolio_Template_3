@@ -1,42 +1,29 @@
-
+import { Skills_Data , Projects_Data } from "./data.js";
 /*******************Dark mode*********************** */
-let moodbtn = document.querySelector(".dark-mode");
+const moodbtn = document.querySelector(".dark-mode");
 let dark_theme ="dark-theme";
 
 
 /*******************Burger*************************/
-let burger = document.querySelector("#burger");
-let nav_ul = document.querySelector(".nav-ul");
-let close = document.querySelector("#close");
+const burger = document.querySelector("#burger");
+const nav_ul = document.querySelector(".nav-ul");
+const close = document.querySelector("#close");
 
-/***progress animation***/
+/***Skills bar animation***/
+const skills_section = document.querySelector("#skills");
+const skills_cardbox = document.querySelector("#skills .card-box");
 
-let c1 = document.querySelector("#c1");
-let c2 = document.querySelector("#c2");
-let c3 = document.querySelector("#c3");
-let skills_section = document.querySelector("#skills");
-
-
-/***progress counter***/
-
-let outer1 = document.querySelector("#outer1");
-let outer2 = document.querySelector("#outer2");
-let outer3 = document.querySelector("#outer3");
-let prog1 = document.querySelector(".prog1");
-let prog2 = document.querySelector(".prog2");
-let prog3 = document.querySelector(".prog3");
-let counter = 0;
 
 /********************navbarlinks*********************** */
-let links=  document.querySelectorAll('nav li a');
-let sections = document.querySelectorAll(".section");
+const links=  document.querySelectorAll('nav li a');
+const sections = document.querySelectorAll(".active-section");
 
 
 
 /***************************mainbtn**********************************/
 
 
-let mainbtn = document.querySelector("#main-btn");
+const mainbtn = document.querySelector("#main-btn");
 
 
 /******************Dark mode*************************************************************/
@@ -83,7 +70,7 @@ localStorage.setItem("theme-icon",getcurrenticon());
 /*********************************burger***************************************/
 
 burger.onclick = ()=>{
-    nav_ul.style = ` right:-10px;`
+    nav_ul.style = ` right:-4rem;`
     close.style = `display:block;`
 }
 
@@ -94,6 +81,15 @@ close.onclick = ()=>{
 
 /******setting up skills animation ****************************/
 
+function AnimateSvgSkills(){
+    /*
+    const circles_2b_animated = document.querySelectorAll("#skills circle");
+    circles_2b_animated.forEach(circle=>{
+        circle.style = `animation: circleAnim 1.2s linear forwards;` 
+    })
+*/
+}
+
 
 
 /***************** skills counter*********************/
@@ -101,43 +97,8 @@ close.onclick = ()=>{
 
 
 window.addEventListener ('scroll',()=>{
-
-   
-
-    if( window.scrollY >=skills_section.offsetTop - skills_section.offsetHeight * 0.4){
-       c1.style = `animation: progress1 1.2s linear forwards;` 
-       c2.style = `animation: progress2 1.2s linear forwards;`
-       c3.style = `animation: progress3 1.2s linear forwards;`
-       
-       setInterval(()=>{
-    
-        if(counter <= outer1.getAttribute("data-skill")){
-            counter++;
-            prog1.innerHTML = `${counter-1}%`
-            
-        }else{clearInterval()};
-        
-        },45);
-        
-        setInterval(()=>{
-            
-            if(counter <= outer2.getAttribute("data-skill")){
-                counter++;
-                prog2.innerHTML = `${counter}%`
-            }else{clearInterval()};
-            },45);
-        
-        
-            setInterval(()=>{
-            
-                if(counter <= outer3.getAttribute("data-skill")){
-                    counter++;
-                    prog3.innerHTML = `${counter+1}%`
-                    
-                }else{clearInterval()};
-                },45);
-    }
-  
+    // chicking which link in nav bar is active 
+    ActiveNavLink();
 })
     
 
@@ -157,42 +118,165 @@ mainbtn.onclick = function(){
 
 /******************navlinks************************/
 
-window.onscroll = function () {
-    let scrollpos = document.documentElement.scrollTop;
+  function ActiveNavLink() {
+    let scrollpos = window.scrollY;
+    let window_height = window.innerHeight;
    
     sections.forEach((section) => {
-        if (scrollpos >= section.offsetTop - section.offsetHeight * 0.2   &&  scrollpos <section.offsetTop + section.offsetHeight - section.offsetHeight * 0.2 ) {
-          
-          
+        if (scrollpos >= (section.offsetTop  - window_height *0.5) && scrollpos <= (section.offsetTop + section.scrollHeight)) {
+        
             let sectionid = section.attributes.id.value;
-          
-             links.forEach( link =>{
-
-                if(link.getAttribute("href") === "#" + section.getAttribute("id")){
-
-
-                    links.forEach(temp =>{
-                        temp.classList.remove("active");
+                links.forEach( link =>{
+                            if(link.getAttribute("href") === "#" + section.getAttribute("id")){
+                                links.forEach(temp =>{
+                                    temp.classList.remove("active");
+                                })
+                                
+                                link.classList.toggle("active");
+                            }
                     })
-                    
-                    link.classList.toggle("active");
-
-
-                }
-
-
-
-
-
-
-
-             })
-
-
+            // activate circle animation when section is skills
+            
+            if(sectionid === skills_section.attributes.id.value){
+                
+                AnimateSvgSkills()
+            }
         }
 
-  
+        
     }
-
     )
 }
+/*************************** Display Skills **********************************/
+
+let Skills_elements = ``;
+let Skills_fragment = document.createDocumentFragment();
+
+Skills_Data.forEach((skill) => {
+    // Create elements for each skill
+    let skillsCard = document.createElement('div');
+    skillsCard.classList.add('skills-card');
+
+    let outerDiv = document.createElement('div');
+    outerDiv.classList.add('outer');
+    
+
+    let innerDiv = document.createElement('div');
+    innerDiv.classList.add('inner');
+
+    let skillsTextDiv = document.createElement('div');
+    skillsTextDiv.classList.add('skills-text');
+
+    let imgElement = document.createElement('img');
+    imgElement.classList.add('skills-img');
+    imgElement.src = skill.src;
+    imgElement.alt = skill.alt;
+    imgElement.setAttribute('loading', 'lazy');
+
+    let h2Element = document.createElement('h2');
+    h2Element.textContent = skill.name;
+
+    // Append elements to their respective parent elements
+    skillsTextDiv.appendChild(imgElement);
+    skillsTextDiv.appendChild(h2Element);
+    innerDiv.appendChild(skillsTextDiv);
+    outerDiv.appendChild(innerDiv);
+    skillsCard.appendChild(outerDiv);
+
+    // Append the SVG element (assuming it's the same for all cards)
+    let svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgElement.classList.add('skills-card-svg');
+    svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svgElement.setAttribute('version', '1.1');
+    svgElement.setAttribute('width', '16.25rem');
+    svgElement.setAttribute('height', '16.25rem');
+
+
+    let circleElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    console.log(skill.strokeColor)
+    circleElement.setAttribute('stroke', skill.strokeColor);
+    circleElement.setAttribute('cx', '8.125rem');
+    circleElement.setAttribute('cy', '8.125rem');
+    circleElement.setAttribute('r', '7.5rem');
+    circleElement.setAttribute('stroke-linecap', 'round');
+    svgElement.appendChild(circleElement);
+
+    // Append SVG element to skills card
+    skillsCard.appendChild(svgElement);
+
+    // Append each skillsCard to the fragment
+    Skills_fragment.appendChild(skillsCard);
+});
+
+// Append the fragment to the container
+skills_cardbox.appendChild(Skills_fragment);
+
+
+/*
+    <div class="skills-card">
+            <div id="outer3"class="outer" style="stroke:${skill.strokeColor};">
+                <div class="inner">
+                    <div class="skills-text">
+                        <img  class="skills-img" src="${skill.src}" alt="${skill.alt}">
+                        <h2 id="js">${skill.name}</h2>
+                    </div>
+                </div>
+            </div>
+            <svg class="skills-card-svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="16.25rem" height="16.25rem">
+                <defs>
+                <linearGradient id="GradientColor">
+                    <stop offset="0%" stop-color="#e91e63" />
+                    <stop offset="100%" stop-color="#673ab7" />
+                </linearGradient>
+                </defs>
+                <circle id="c3" cx="8.125rem" cy="8.125rem" r="7.5rem" stroke-linecap="round" />
+            </svg>
+        </div>
+
+*/
+
+/***********************************Projects load***************************************/
+let CardBox_Projects = document.querySelector(".projects .card-box");
+let projects_fragment = document.createDocumentFragment();
+Projects_Data.forEach((project)=>{
+    let  card = document.createElement("div");
+    card.classList.add("proj-card");
+    // creating children of card which are img and p
+    let img = document.createElement("img");
+    img.setAttribute("src",project.src);
+    img.setAttribute("alt",project.name);
+    img.setAttribute("width",300);
+    img.setAttribute("height",200);
+    img.setAttribute("loading","lazy");
+    let name = document.createElement("h2");
+    name.classList.add("proj-title");
+    name.textContent = project.name;
+    let desc = document.createElement("p");
+    desc.classList.add("proj-p");
+    desc.textContent = project.desc;
+    let date_link_wrapper = document.createElement("div");
+    date_link_wrapper.classList.add("date-link-wrapper");
+    let date = document.createElement("a");
+    date.classList.add("proj-date");
+    date.textContent = project.date;
+    let a = document.createElement("a");
+    a.setAttribute("href","");
+    a.classList.add("btn-link");
+    a.textContent = "Learn More";
+    // appending to date_link_wrapper
+    date_link_wrapper.appendChild(date);
+    date_link_wrapper.appendChild(a);
+    // now appending to card
+    card.appendChild(img);
+    card.appendChild(name);
+    card.appendChild(desc);
+    card.appendChild(date_link_wrapper);
+    // now appending to fragment element
+    projects_fragment.appendChild(card);
+
+})
+
+CardBox_Projects.appendChild(projects_fragment); // now appending whole to Dom at once
+
+
+
